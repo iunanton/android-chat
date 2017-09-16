@@ -46,7 +46,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/messages_body"
+            android:id="@+id/message_body"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

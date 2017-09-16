@@ -23,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
 
-    private TextView MessagesWrapper;
+    // private TextView MessagesWrapper;
+    private ListView MessagesWrapper;
 
     private OkHttpClient client;
 
@@ -116,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> messagesAdapter =
                 new ArrayAdapter<String>(this,
-                        R.layout.activity_main,
-                        R.id.messages_wrapper,
+                        R.layout.messages_list_item,
                         messages
                 ) {
                     @Override
@@ -127,23 +127,23 @@ public class MainActivity extends AppCompatActivity {
                         String currentMessage = messages[position];
                         if(convertView == null) {
                             convertView = getLayoutInflater()
-                                    .inflate(R.layout.activity_main, parent, false);
+                                    .inflate(R.layout.messages_list_item, parent, false);
                         }
-                        TextView messages_wrapper =
-                                (TextView)convertView.findViewById(R.id.messages_wrapper);
-                        messages_wrapper.setText(currentMessage);
+                        TextView message_body =
+                                (TextView)convertView.findViewById(R.id.message_body);
+                        message_body.setText(currentMessage);
                         return convertView;
                     }
                 };
 
-        ListView messagesList = new ListView(this);
+        MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
 
-        setContentView(messagesList);
-
-        messagesList.setAdapter(messagesAdapter);
-/*
+        //setContentView(MessagesWrapper);
         setContentView(R.layout.activity_main);
 
+        MessagesWrapper.setAdapter(messagesAdapter);
+
+/*
         MessagesWrapper = (TextView) findViewById(R.id.messages_wrapper);
 
         client = new OkHttpClient();
