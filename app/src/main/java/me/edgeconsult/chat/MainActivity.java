@@ -21,27 +21,44 @@ import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
 
+    static class Message {
+        String username;
+        Integer time;
+        String body;
+
+        public Message(String username, Integer time, String body) {
+            this.username = username;
+            this.time = time;
+            this.body = body;
+        }
+    }
+
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
 
     // private TextView MessagesWrapper;
-    private ListView MessagesWrapper;
 
     private OkHttpClient client;
 
-    String[] messages = {
-            "Apple",
-            "Orange",
-            "Banana",
-            "Pineapple",
-            "Lychee",
-            "Blueberry",
-            "Lime",
-            "Mango",
-            "Strawberry",
-            "Pomelo",
-            "Grapefruit",
-            "Peach",
-            "Pear"
+    Message[] messages = {
+            new Message("Hellokitty", 44883, "Welcome to Android Chat!"),
+            new Message("Hellokitty", 44883, "서울치킨최고"),
+            new Message("Hellokitty", 44883, "Apple"),
+            new Message("Hellokitty", 44883, "사과"),
+            new Message("Hellokitty", 44883, "배"),
+            new Message("Hellokitty", 44883, "Orange"),
+            new Message("Hellokitty", 44883, "Banana"),
+            new Message("Hellokitty", 44883, "초코바나나"),
+            new Message("Hellokitty", 44883, "Pineapple"),
+            new Message("Hellokitty", 44883, "Lychee"),
+            new Message("Hellokitty", 44883, "바나나우유"),
+            new Message("Hellokitty", 44883, "Blueberry"),
+            new Message("Hellokitty", 44883, "Lime"),
+            new Message("Hellokitty", 44883, "Mango"),
+            new Message("Hellokitty", 44883, "Strawberry"),
+            new Message("Hellokitty", 44883, "Pomelo"),
+            new Message("Hellokitty", 44883, "Grapefruit"),
+            new Message("Hellokitty", 44883, "Peach"),
+            new Message("Hellokitty", 44883, "Pear")
     };
 
     private final class EchoWebSocketListener extends WebSocketListener {
@@ -115,20 +132,46 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ArrayAdapter<String> messagesAdapter =
-                new ArrayAdapter<String>(this,
+        ArrayAdapter<Message> messagesAdapter =
+                new ArrayAdapter<Message>(this,
                         R.layout.messages_list_item,
-                        R.id.message_body,
                         messages
-                );
+                ) {
+                    @Override
+                    public View getView(int position,
+                                        View convertView,
+                                        ViewGroup parent) {
+                        Message currentMessage = messages[position];
+                        // Inflate only once
+                        if(convertView == null) {
+                            convertView = getLayoutInflater()
+                                    .inflate(R.layout.messages_list_item, null, false);
+                        }
+                        TextView username =
+                                (TextView)convertView.findViewById(R.id.message_username);
+                        TextView time =
+                                (TextView)convertView.findViewById(R.id.message_time);
+                        TextView body =
+                                (TextView)convertView.findViewById(R.id.message_body);
 
-        MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
+                        username.setText(currentMessage.username);
+                        time.setText(String.valueOf(currentMessage.time));
+                        body.setText(currentMessage.body);
 
-        //setContentView(MessagesWrapper);
+                        return convertView;
+                    }
+                };
+
+        ListView MessagesWrapper = new ListView(this);
+
+        setContentView(MessagesWrapper);
+        MessagesWrapper.setAdapter(messagesAdapter);
+/*
         setContentView(R.layout.activity_main);
 
-        MessagesWrapper.setAdapter(messagesAdapter);
 
+
+        setContentView(R.layout.activity_main);
 /*
         MessagesWrapper = (TextView) findViewById(R.id.messages_wrapper);
 
