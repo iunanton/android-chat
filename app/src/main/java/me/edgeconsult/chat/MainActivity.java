@@ -3,6 +3,8 @@ package me.edgeconsult.chat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private OkHttpClient client;
 
-    String[] cheeses = {
+    String[] messages = {
             "Apple",
             "Orange",
             "Banana",
@@ -116,8 +118,23 @@ public class MainActivity extends AppCompatActivity {
                 new ArrayAdapter<String>(this,
                         R.layout.activity_main,
                         R.id.messages_wrapper,
-                        cheeses
-                );
+                        messages
+                ) {
+                    @Override
+                    public View getView(int position,
+                                        View convertView,
+                                        ViewGroup parent) {
+                        String currentMessage = messages[position];
+                        if(convertView == null) {
+                            convertView = getLayoutInflater()
+                                    .inflate(R.layout.activity_main, parent, false);
+                        }
+                        TextView messages_wrapper =
+                                (TextView)convertView.findViewById(R.id.messages_wrapper);
+                        messages_wrapper.setText(currentMessage);
+                        return convertView;
+                    }
+                };
 
         ListView messagesList = new ListView(this);
 
