@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     // private TextView MessagesWrapper;
 
     private ListView MessagesWrapper;
+    private EditText Input;
     private Button SendButton;
 
     private OkHttpClient client;
@@ -206,13 +207,15 @@ public class MainActivity extends AppCompatActivity {
                         messagesList);
 
         MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
+        Input = (EditText) findViewById(R.id.input);
         SendButton = (Button) findViewById(R.id.send_button);
 
         MessagesWrapper.setAdapter(messagesAdapter);
 
         SendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                showInputBox();
+                messagesAdapter.add(Input.getText().toString());
+                Input.setText("");
             }
         });
 /*
@@ -268,24 +271,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 */
-public void showInputBox() {
-    final Dialog dialog = new Dialog(MainActivity.this);
-    dialog.setTitle("입력곳");
-    dialog.setContentView(R.layout.input_box);
-    TextView txtMessage=dialog.findViewById(R.id.txtmessage);
-    txtMessage.setText("상품 추가");
-    txtMessage.setTextColor(Color.parseColor("#FF4081"));
-    final EditText editText=dialog.findViewById(R.id.txtinput);
-    Button bt=dialog.findViewById(R.id.btdone);
-    bt.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            messagesAdapter.add(editText.getText().toString());
-            dialog.dismiss();
-        }
-    });
-    dialog.show();
-}
 
     private void output(final String txt) {
         runOnUiThread(new Runnable() {
