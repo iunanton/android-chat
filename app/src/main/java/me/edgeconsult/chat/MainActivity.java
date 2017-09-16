@@ -1,5 +1,6 @@
 package me.edgeconsult.chat;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,9 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -22,19 +26,19 @@ import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    static class Message {
+    private static class Message {
         String username;
         Integer time;
         String body;
 
-        public Message(String username, Integer time, String body) {
+        Message(String username, Integer time, String body) {
             this.username = username;
             this.time = time;
             this.body = body;
         }
     }
 
-    static class ViewHolder{
+    private static class ViewHolder{
         TextView username;
         TextView time;
         TextView body;
@@ -46,9 +50,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView MessagesWrapper;
 
+    private ArrayAdapter<Message> messagesAdapter;
+
     private OkHttpClient client;
 
-    Message[] messages = {
+    private Message[] messages = {
             new Message("Hellokitty", 44883, "Welcome to Android Chat!"),
             new Message("Hellokitty", 44883, "서울치킨최고"),
             new Message("Hellokitty", 44883, "Apple"),
@@ -69,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             new Message("Hellokitty", 44883, "Peach"),
             new Message("Hellokitty", 44883, "Pear")
     };
+
+    ArrayList<Message> Target;
 
     private final class EchoWebSocketListener extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
@@ -142,44 +150,44 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayAdapter<Message> messagesAdapter =
+        Target = new ArrayList<>(Arrays.asList(messages));
+
+        messagesAdapter =
                 new ArrayAdapter<Message>(this,
                         R.layout.messages_list_item,
-                        messages
-                ) {
-                    @Override
-                    public View getView(int position,
-                                        View convertView,
-                                        ViewGroup parent) {
-                        Message currentMessage = messages[position];
-                        // Inflate only once
-                        if (convertView == null) {
-                            convertView = getLayoutInflater()
-                                    .inflate(R.layout.messages_list_item, null, false);
-                            ViewHolder viewHolder = new ViewHolder();
-                            viewHolder.username =
-                                    (TextView) convertView.findViewById(R.id.message_username);
-                            viewHolder.time =
-                                    (TextView) convertView.findViewById(R.id.message_time);
-                            viewHolder.body =
-                                    (TextView) convertView.findViewById(R.id.message_body);
-                            convertView.setTag(viewHolder);
-                        }
+                        Target) {
+            @NonNull
+            public View getView(int position,
+                                View convertView,
+                                @NonNull ViewGroup parent) {
+                Message currentMessage = messages[position];
+                // Inflate only once
+                if (convertView == null) {
+                    convertView = getLayoutInflater()
+                            .inflate(R.layout.messages_list_item, parent, false);
+                    ViewHolder viewHolder = new ViewHolder();
+                    viewHolder.username = convertView.findViewById(R.id.message_username);
+                    viewHolder.time = convertView.findViewById(R.id.message_time);
+                    viewHolder.body = convertView.findViewById(R.id.message_body);
+                    convertView.setTag(viewHolder);
+                }
 
-                        TextView username =
-                                ((ViewHolder) convertView.getTag()).username;
-                        TextView time =
-                                ((ViewHolder) convertView.getTag()).time;
-                        TextView body =
-                                ((ViewHolder) convertView.getTag()).body;
+                TextView username =
+                        ((ViewHolder) convertView.getTag()).username;
+                TextView time =
+                        ((ViewHolder) convertView.getTag()).time;
+                TextView body =
+                        ((ViewHolder) convertView.getTag()).body;
 
-                        username.setText(currentMessage.username);
-                        time.setText(String.valueOf(currentMessage.time));
-                        body.setText(currentMessage.body);
+                username.setText(currentMessage.username);
+                time.setText(String.valueOf(currentMessage.time));
+                body.setText(currentMessage.body);
 
-                        return convertView;
-                    }
-                };
+                return convertView;
+            }
+        };
+
+        //messagesAdapter.setNotifyOnChange(true);
 
         MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
         MessagesWrapper.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -203,17 +211,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         MessagesWrapper.setAdapter(messagesAdapter);
-
-/*
-        MessagesWrapper = (TextView) findViewById(R.id.messages_wrapper);
-
+        Target.add(new Message("iunanton", 5466, "Hello"));
+        messagesAdapter.notifyDataSetChanged();
         client = new OkHttpClient();
 
         Request request = new Request.Builder().url("wss://owncloudhk.net").build();
         EchoWebSocketListener listener = new EchoWebSocketListener();
         WebSocket ws = client.newWebSocket(request, listener);
 
-        client.dispatcher().executorService().shutdown(); */
+        client.dispatcher().executorService().shutdown();
     }
 
     private void output(final String txt) {

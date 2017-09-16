@@ -3,4 +3,5 @@
     <string name="message_username">Hellokitty</string>
     <string name="message_time">15:19</string>
     <string name="message_body">Welcome to Android Chat!</string>
+    <string name="send_button">Send</string>
 </resources>
