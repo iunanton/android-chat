@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            Log.i(TAG, "onOpen");
+            Log.i(TAG, jString);
             webSocket.send(jString);
             }
     }
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         client = new OkHttpClient();
 
-        Request request = new Request.Builder().url("ws://172.17.0.6").build();
+        Request request = new Request.Builder().url("wss://owncloudhk.net").build();
         EchoWebSocketListener listener = new EchoWebSocketListener();
         WebSocket ws = client.newWebSocket(request, listener);
 
