@@ -23,6 +23,22 @@ public class MainActivity extends AppCompatActivity {
 
     private OkHttpClient client;
 
+    String[] cheeses = {
+            "Apple",
+            "Orange",
+            "Banana",
+            "Pineapple",
+            "Lychee",
+            "Blueberry",
+            "Lime",
+            "Mango",
+            "Strawberry",
+            "Pomelo",
+            "Grapefruit",
+            "Peach",
+            "Pear"
+    };
+
     private final class EchoWebSocketListener extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
 
