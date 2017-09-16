@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +44,21 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             output(text);
+            try {
+                JSONObject message = new JSONObject(text);
+                final String type = message.getString("type");
+                output(type);
+            } catch (final JSONException e) {
+                Log.e(MAIN_ACTIVITY_TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         }
     }
 
