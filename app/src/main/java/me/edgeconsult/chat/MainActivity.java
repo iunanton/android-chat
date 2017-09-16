@@ -3,6 +3,8 @@ package me.edgeconsult.chat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -109,6 +111,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ArrayAdapter<String> messagesAdapter =
+                new ArrayAdapter<String>(this,
+                        R.layout.activity_main,
+                        R.id.messages_wrapper,
+                        cheeses
+                );
+
+        ListView messagesList = new ListView(this);
+
+        setContentView(messagesList);
+
+        messagesList.setAdapter(messagesAdapter);
+/*
         setContentView(R.layout.activity_main);
 
         MessagesWrapper = (TextView) findViewById(R.id.messages_wrapper);
@@ -119,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         EchoWebSocketListener listener = new EchoWebSocketListener();
         WebSocket ws = client.newWebSocket(request, listener);
 
-        client.dispatcher().executorService().shutdown();
+        client.dispatcher().executorService().shutdown(); */
     }
 
     private void output(final String txt) {
