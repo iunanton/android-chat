@@ -118,23 +118,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> messagesAdapter =
                 new ArrayAdapter<String>(this,
                         R.layout.messages_list_item,
+                        R.id.message_body,
                         messages
-                ) {
-                    @Override
-                    public View getView(int position,
-                                        View convertView,
-                                        ViewGroup parent) {
-                        String currentMessage = messages[position];
-                        if(convertView == null) {
-                            convertView = getLayoutInflater()
-                                    .inflate(R.layout.messages_list_item, parent, false);
-                        }
-                        TextView message_body =
-                                (TextView)convertView.findViewById(R.id.message_body);
-                        message_body.setText(currentMessage);
-                        return convertView;
-                    }
-                };
+                );
 
         MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
 
@@ -159,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                MessagesWrapper.setText(txt);
+                //MessagesWrapper.setText(txt);
             }
         });
     }
