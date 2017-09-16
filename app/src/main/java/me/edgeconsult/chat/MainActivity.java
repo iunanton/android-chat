@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
 
     // private TextView MessagesWrapper;
+
+    private ListView MessagesWrapper;
 
     private OkHttpClient client;
 
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         ArrayAdapter<Message> messagesAdapter =
                 new ArrayAdapter<Message>(this,
@@ -149,25 +153,25 @@ public class MainActivity extends AppCompatActivity {
                                         ViewGroup parent) {
                         Message currentMessage = messages[position];
                         // Inflate only once
-                        if(convertView == null) {
+                        if (convertView == null) {
                             convertView = getLayoutInflater()
                                     .inflate(R.layout.messages_list_item, null, false);
                             ViewHolder viewHolder = new ViewHolder();
                             viewHolder.username =
-                                    (TextView)convertView.findViewById(R.id.message_username);
+                                    (TextView) convertView.findViewById(R.id.message_username);
                             viewHolder.time =
-                                    (TextView)convertView.findViewById(R.id.message_time);
+                                    (TextView) convertView.findViewById(R.id.message_time);
                             viewHolder.body =
-                                    (TextView)convertView.findViewById(R.id.message_body);
+                                    (TextView) convertView.findViewById(R.id.message_body);
                             convertView.setTag(viewHolder);
                         }
 
                         TextView username =
-                                ((ViewHolder)convertView.getTag()).username;
+                                ((ViewHolder) convertView.getTag()).username;
                         TextView time =
-                                ((ViewHolder)convertView.getTag()).time;
+                                ((ViewHolder) convertView.getTag()).time;
                         TextView body =
-                                ((ViewHolder)convertView.getTag()).body;
+                                ((ViewHolder) convertView.getTag()).body;
 
                         username.setText(currentMessage.username);
                         time.setText(String.valueOf(currentMessage.time));
@@ -177,16 +181,29 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
 
-        ListView MessagesWrapper = new ListView(this);
+        MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
+        MessagesWrapper.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView,
+                                    View view, int position, long rowId) {
 
-        setContentView(MessagesWrapper);
+                // Generate a message based on the position
+                final String message = "You clicked on " + messages[position].body;
+
+                // Use the message to create a Toast
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                message,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
         MessagesWrapper.setAdapter(messagesAdapter);
-/*
-        setContentView(R.layout.activity_main);
 
-
-
-        setContentView(R.layout.activity_main);
 /*
         MessagesWrapper = (TextView) findViewById(R.id.messages_wrapper);
 
