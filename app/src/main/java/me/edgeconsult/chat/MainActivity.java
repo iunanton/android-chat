@@ -55,25 +55,25 @@ public class MainActivity extends AppCompatActivity {
     private OkHttpClient client;
 
     private Message[] messages = {
-            new Message("Hellokitty", 44883, "Welcome to Android Chat!"),
-            new Message("Hellokitty", 44883, "서울치킨최고"),
-            new Message("Hellokitty", 44883, "Apple"),
-            new Message("Hellokitty", 44883, "사과"),
-            new Message("Hellokitty", 44883, "배"),
-            new Message("Hellokitty", 44883, "Orange"),
-            new Message("Hellokitty", 44883, "Banana"),
-            new Message("Hellokitty", 44883, "초코바나나"),
-            new Message("Hellokitty", 44883, "Pineapple"),
-            new Message("Hellokitty", 44883, "Lychee"),
-            new Message("Hellokitty", 44883, "바나나우유"),
-            new Message("Hellokitty", 44883, "Blueberry"),
-            new Message("Hellokitty", 44883, "Lime"),
-            new Message("Hellokitty", 44883, "Mango"),
-            new Message("Hellokitty", 44883, "Strawberry"),
-            new Message("Hellokitty", 44883, "Pomelo"),
-            new Message("Hellokitty", 44883, "Grapefruit"),
-            new Message("Hellokitty", 44883, "Peach"),
-            new Message("Hellokitty", 44883, "Pear")
+            new Message("헬로 키티", 44883, "Welcome to Android Chat!"),
+            new Message("헬로 키티", 44883, "서울치킨최고"),
+            new Message("헬로 키티", 44883, "Apple"),
+            new Message("헬로 키티", 44883, "사과"),
+            new Message("헬로 키티", 44883, "배"),
+            new Message("헬로 키티", 44883, "Orange"),
+            new Message("헬로 키티", 44883, "Banana"),
+            new Message("헬로 키티", 44883, "초코바나나"),
+            new Message("헬로 키티", 44883, "Pineapple"),
+            new Message("헬로 키티", 44883, "Lychee"),
+            new Message("헬로 키티", 44883, "바나나우유"),
+            new Message("헬로 키티", 44883, "Blueberry"),
+            new Message("헬로 키티", 44883, "Lime"),
+            new Message("헬로 키티", 44883, "Mango"),
+            new Message("헬로 키티", 44883, "Strawberry"),
+            new Message("헬로 키티", 44883, "Pomelo"),
+            new Message("헬로 키티", 44883, "Grapefruit"),
+            new Message("헬로 키티", 44883, "Peach"),
+            new Message("헬로 키티", 44883, "Pear")
     };
 
     ArrayList<Message> Target;
