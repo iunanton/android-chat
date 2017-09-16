@@ -16,7 +16,7 @@ import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "Chat";
+    private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
 
     private TextView MessagesWrapper;
 
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            Log.i(TAG, jString);
+            Log.i(MAIN_ACTIVITY_TAG, jString);
             webSocket.send(jString);
             }
 
