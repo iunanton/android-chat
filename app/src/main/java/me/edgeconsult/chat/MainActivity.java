@@ -46,8 +46,36 @@ public class MainActivity extends AppCompatActivity {
             output(text);
             try {
                 JSONObject message = new JSONObject(text);
-                final String type = message.getString("type");
-                output(type);
+                String type = message.getString("type");
+                JSONObject data = message.getJSONObject("data");
+                switch (type) {
+                    case "context":
+                        output(type);
+                        break;
+                    case "userJoined":
+                        final String username = data.getString("username");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(),
+                                        username + " joined",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        break;
+                    case "userLeft":
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(),
+                                        "user left",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
             } catch (final JSONException e) {
                 Log.e(MAIN_ACTIVITY_TAG, "Json parsing error: " + e.getMessage());
                 runOnUiThread(new Runnable() {
