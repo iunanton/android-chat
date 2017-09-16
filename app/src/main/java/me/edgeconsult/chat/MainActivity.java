@@ -3,6 +3,7 @@ package me.edgeconsult.chat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +17,8 @@ import okhttp3.WebSocketListener;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Chat";
+
+    private TextView MessagesWrapper;
 
     private OkHttpClient client;
 
@@ -36,12 +39,19 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, jString);
             webSocket.send(jString);
             }
+
+        @Override
+        public void onMessage(WebSocket webSocket, String text) {
+            output(text);
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MessagesWrapper = (TextView) findViewById(R.id.messages_wrapper);
 
         client = new OkHttpClient();
 
@@ -50,5 +60,14 @@ public class MainActivity extends AppCompatActivity {
         WebSocket ws = client.newWebSocket(request, listener);
 
         client.dispatcher().executorService().shutdown();
+    }
+
+    private void output(final String txt) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MessagesWrapper.setText(txt);
+            }
+        });
     }
 }
