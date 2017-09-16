@@ -4,4 +4,27 @@
     <string name="message_time">15:19</string>
     <string name="message_body">Welcome to Android Chat!</string>
     <string name="send_button">전송</string>
+    <string name="done_button">완료</string>
+    <string-array name="message_body_array">
+        private Message[] messages = {
+        <item>Welcome to Android Chat!</item>
+        <item>서울치킨최고</item>
+        <item>Apple</item>
+        <item>사과</item>
+        <item>배</item>
+        <item>Orange</item>
+        <item>Banana</item>
+        <item>초코바나나</item>
+        <item>Pineapple</item>
+        <item>Lychee</item>
+        <item>바나나우유</item>
+        <item>Blueberry</item>
+        <item>Lime</item>
+        <item>Mango</item>
+        <item>Strawberry</item>
+        <item>Pomelo</item>
+        <item>Grapefruit</item>
+        <item>Peach</item>
+        <item>Pear"</item>
+    </string-array>
 </resources>

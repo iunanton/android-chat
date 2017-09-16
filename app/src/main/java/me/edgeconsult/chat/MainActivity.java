@@ -1,5 +1,7 @@
 package me.edgeconsult.chat;
 
+import android.app.Dialog;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +29,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
-
+/*
     private static class Message {
         String username;
         Integer time;
@@ -43,17 +47,16 @@ public class MainActivity extends AppCompatActivity {
         TextView time;
         TextView body;
     }
-
+*/
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
 
     // private TextView MessagesWrapper;
 
     private ListView MessagesWrapper;
-
-    private ArrayAdapter<Message> messagesAdapter;
+    private Button SendButton;
 
     private OkHttpClient client;
-
+/*
     private Message[] messages = {
             new Message("헬로 키티", 44883, "Welcome to Android Chat!"),
             new Message("헬로 키티", 44883, "서울치킨최고"),
@@ -75,8 +78,12 @@ public class MainActivity extends AppCompatActivity {
             new Message("헬로 키티", 44883, "Peach"),
             new Message("헬로 키티", 44883, "Pear")
     };
+*/
+    //private ArrayList<Message> messagesList;
+    //private ArrayAdapter<Message> messagesAdapter;
 
-    ArrayList<Message> Target;
+    private ArrayList<String> messagesList;
+    private ArrayAdapter<String> messagesAdapter;
 
     private final class EchoWebSocketListener extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
@@ -150,12 +157,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Target = new ArrayList<>(Arrays.asList(messages));
-
+        messagesList = new ArrayList<>(Arrays.asList(getApplicationContext().getResources().getStringArray(R.array.message_body_array)));
+/*
         messagesAdapter =
                 new ArrayAdapter<Message>(this,
                         R.layout.messages_list_item,
-                        Target) {
+                        messagesList) {
+            @Override
+            public int getCount() {
+                return messagesList.size();
+            }
+
             @NonNull
             public View getView(int position,
                                 View convertView,
@@ -186,19 +198,30 @@ public class MainActivity extends AppCompatActivity {
                 return convertView;
             }
         };
-
-        //messagesAdapter.setNotifyOnChange(true);
+*/
+        messagesAdapter =
+                new ArrayAdapter<>(this,
+                        R.layout.messages_list_item,
+                        R.id.message_body,
+                        messagesList);
 
         MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
+        SendButton = (Button) findViewById(R.id.send_button);
+
+        MessagesWrapper.setAdapter(messagesAdapter);
+
+        SendButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showInputBox();
+            }
+        });
+/*
         MessagesWrapper.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView,
                                     View view, int position, long rowId) {
-
-                // Generate a message based on the position
+                //showInputBox(messagesList.get(position),position);
                 final String message = "You clicked on " + messages[position].body;
-
-                // Use the message to create a Toast
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -207,12 +230,12 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+                messagesList.add(new Message("iunanton", 5466, "Hello"));
+                messagesAdapter.notifyDataSetChanged();
+
             }
         });
-
-        MessagesWrapper.setAdapter(messagesAdapter);
-        Target.add(new Message("iunanton", 5466, "Hello"));
-        messagesAdapter.notifyDataSetChanged();
+*/
         client = new OkHttpClient();
 
         Request request = new Request.Builder().url("wss://owncloudhk.net").build();
@@ -221,6 +244,48 @@ public class MainActivity extends AppCompatActivity {
 
         client.dispatcher().executorService().shutdown();
     }
+/*
+    public void showInputBox(Message oldItem, final int index) {
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.setTitle("Input Box");
+        dialog.setContentView(R.layout.input_box);
+        TextView txtMessage=(TextView)dialog.findViewById(R.id.txtmessage);
+        txtMessage.setText("Update item");
+        txtMessage.setTextColor(Color.parseColor("#ff2222"));
+        final EditText editText=(EditText)dialog.findViewById(R.id.txtinput);
+        editText.setText(oldItem.body);
+        Button bt=(Button)dialog.findViewById(R.id.btdone);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Message newItem = new Message("윤안톤", 5564, editText.getText().toString());
+                messagesList.add(newItem);
+                // messagesList.set(index,newItem);
+                messagesAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+*/
+public void showInputBox() {
+    final Dialog dialog = new Dialog(MainActivity.this);
+    dialog.setTitle("입력곳");
+    dialog.setContentView(R.layout.input_box);
+    TextView txtMessage=dialog.findViewById(R.id.txtmessage);
+    txtMessage.setText("상품 추가");
+    txtMessage.setTextColor(Color.parseColor("#FF4081"));
+    final EditText editText=dialog.findViewById(R.id.txtinput);
+    Button bt=dialog.findViewById(R.id.btdone);
+    bt.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            messagesAdapter.add(editText.getText().toString());
+            dialog.dismiss();
+        }
+    });
+    dialog.show();
+}
 
     private void output(final String txt) {
         runOnUiThread(new Runnable() {
