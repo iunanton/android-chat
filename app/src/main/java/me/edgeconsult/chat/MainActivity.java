@@ -33,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    static class ViewHolder{
+        TextView username;
+        TextView time;
+        TextView body;
+    }
+
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
 
     // private TextView MessagesWrapper;
@@ -146,13 +152,22 @@ public class MainActivity extends AppCompatActivity {
                         if(convertView == null) {
                             convertView = getLayoutInflater()
                                     .inflate(R.layout.messages_list_item, null, false);
+                            ViewHolder viewHolder = new ViewHolder();
+                            viewHolder.username =
+                                    (TextView)convertView.findViewById(R.id.message_username);
+                            viewHolder.time =
+                                    (TextView)convertView.findViewById(R.id.message_time);
+                            viewHolder.body =
+                                    (TextView)convertView.findViewById(R.id.message_body);
+                            convertView.setTag(viewHolder);
                         }
+
                         TextView username =
-                                (TextView)convertView.findViewById(R.id.message_username);
+                                ((ViewHolder)convertView.getTag()).username;
                         TextView time =
-                                (TextView)convertView.findViewById(R.id.message_time);
+                                ((ViewHolder)convertView.getTag()).time;
                         TextView body =
-                                (TextView)convertView.findViewById(R.id.message_body);
+                                ((ViewHolder)convertView.getTag()).body;
 
                         username.setText(currentMessage.username);
                         time.setText(String.valueOf(currentMessage.time));
