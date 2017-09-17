@@ -29,13 +29,13 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
-/*
+
     private static class ViewHolder{
         TextView username;
         TextView time;
         TextView body;
     }
-*/
+
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
 
     // private TextView MessagesWrapper;
@@ -45,34 +45,31 @@ public class MainActivity extends AppCompatActivity {
     private Button SendButton;
 
     private OkHttpClient client;
-/*
-    private Message[] messages = {
-            new Message("헬로 키티", 44883, "Welcome to Android Chat!"),
-            new Message("헬로 키티", 44883, "서울치킨최고"),
-            new Message("헬로 키티", 44883, "Apple"),
-            new Message("헬로 키티", 44883, "사과"),
-            new Message("헬로 키티", 44883, "배"),
-            new Message("헬로 키티", 44883, "Orange"),
-            new Message("헬로 키티", 44883, "Banana"),
-            new Message("헬로 키티", 44883, "초코바나나"),
-            new Message("헬로 키티", 44883, "Pineapple"),
-            new Message("헬로 키티", 44883, "Lychee"),
-            new Message("헬로 키티", 44883, "바나나우유"),
-            new Message("헬로 키티", 44883, "Blueberry"),
-            new Message("헬로 키티", 44883, "Lime"),
-            new Message("헬로 키티", 44883, "Mango"),
-            new Message("헬로 키티", 44883, "Strawberry"),
-            new Message("헬로 키티", 44883, "Pomelo"),
-            new Message("헬로 키티", 44883, "Grapefruit"),
-            new Message("헬로 키티", 44883, "Peach"),
-            new Message("헬로 키티", 44883, "Pear")
-    };
-*/
-    //private ArrayList<Message> messagesList;
-    //private ArrayAdapter<Message> messagesAdapter;
 
-    private ArrayList<String> messagesList;
-    private ArrayAdapter<String> messagesAdapter;
+    private Message[] messages = {
+            new Message("헬로 키티", 44883L, "Welcome to Android Chat!"),
+            new Message("헬로 키티", 44883L, "서울치킨최고"),
+            new Message("헬로 키티", 44883L, "Apple"),
+            new Message("헬로 키티", 44883L, "사과"),
+            new Message("헬로 키티", 44883L, "배"),
+            new Message("헬로 키티", 44883L, "Orange"),
+            new Message("헬로 키티", 44883L, "Banana"),
+            new Message("헬로 키티", 44883L, "초코바나나"),
+            new Message("헬로 키티", 44883L, "Pineapple"),
+            new Message("헬로 키티", 44883L, "Lychee"),
+            new Message("헬로 키티", 44883L, "바나나우유"),
+            new Message("헬로 키티", 44883L, "Blueberry"),
+            new Message("헬로 키티", 44883L, "Lime"),
+            new Message("헬로 키티", 44883L, "Mango"),
+            new Message("헬로 키티", 44883L, "Strawberry"),
+            new Message("헬로 키티", 44883L, "Pomelo"),
+            new Message("헬로 키티", 44883L, "Grapefruit"),
+            new Message("헬로 키티", 44883L, "Peach"),
+            new Message("헬로 키티", 44883L, "Pear")
+    };
+
+    private ArrayList<Message> messagesList;
+    private ArrayAdapter<Message> messagesAdapter;
 
     private final class EchoWebSocketListener extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
@@ -146,23 +143,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        messagesList = new ArrayList<>(Arrays.asList(getApplicationContext().getResources().getStringArray(R.array.message_body_array)));
-/*
+        messagesList = new ArrayList<>(Arrays.asList(messages));
+
         messagesAdapter =
                 new ArrayAdapter<Message>(this,
                         R.layout.messages_list_item,
                         messagesList) {
-            @Override
-            public int getCount() {
-                return messagesList.size();
-            }
 
             @NonNull
             public View getView(int position,
                                 View convertView,
                                 @NonNull ViewGroup parent) {
-                Message currentMessage = messages[position]; !!!!! 버그　여기　있네！
-                // Inflate only once
+                Message currentMessage = messagesList.get(position); // !!!!! 버그　여기　있네！ !!!!!!!
                 if (convertView == null) {
                     convertView = getLayoutInflater()
                             .inflate(R.layout.messages_list_item, parent, false);
@@ -180,19 +172,13 @@ public class MainActivity extends AppCompatActivity {
                 TextView body =
                         ((ViewHolder) convertView.getTag()).body;
 
-                username.setText(currentMessage.username);
-                time.setText(String.valueOf(currentMessage.time));
-                body.setText(currentMessage.body);
+                username.setText(currentMessage.getUsername());
+                time.setText(String.valueOf(currentMessage.getTime()));
+                body.setText(currentMessage.getBody());
 
                 return convertView;
             }
         };
-*/
-        messagesAdapter =
-                new ArrayAdapter<>(this,
-                        R.layout.messages_list_item,
-                        R.id.message_body,
-                        messagesList);
 
         MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
         Input = (EditText) findViewById(R.id.input);
@@ -202,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
         SendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                messagesAdapter.add(Input.getText().toString());
+                messagesAdapter.add(new Message("윤안톤", 54664545L, Input.getText().toString()));
                 Input.setText("");
             }
         });
@@ -235,30 +221,6 @@ public class MainActivity extends AppCompatActivity {
 
         client.dispatcher().executorService().shutdown();
     }
-/*
-    public void showInputBox(Message oldItem, final int index) {
-        final Dialog dialog = new Dialog(MainActivity.this);
-        dialog.setTitle("Input Box");
-        dialog.setContentView(R.layout.input_box);
-        TextView txtMessage=(TextView)dialog.findViewById(R.id.txtmessage);
-        txtMessage.setText("Update item");
-        txtMessage.setTextColor(Color.parseColor("#ff2222"));
-        final EditText editText=(EditText)dialog.findViewById(R.id.txtinput);
-        editText.setText(oldItem.body);
-        Button bt=(Button)dialog.findViewById(R.id.btdone);
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Message newItem = new Message("윤안톤", 5564, editText.getText().toString());
-                messagesList.add(newItem);
-                // messagesList.set(index,newItem);
-                messagesAdapter.notifyDataSetChanged();
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
-*/
 
     private void output(final String txt) {
         runOnUiThread(new Runnable() {
