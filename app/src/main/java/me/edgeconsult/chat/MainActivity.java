@@ -111,9 +111,14 @@ public class MainActivity extends AppCompatActivity {
 
         SendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String msg = "{ \"type\": \"message\", \"data\": { \"messageBody\": \"" + Input.getText().toString() + "\" } }";
-                ws.send(msg);
-                Input.setText("");
+                String ed_text = Input.getText().toString().trim();
+                if (ed_text.isEmpty() || ed_text.length() == 0 || ed_text.equals("")) {
+                    //EditText is empty
+                } else {
+                    String msg = "{ \"type\": \"message\", \"data\": { \"messageBody\": \"" + ed_text + "\" } }";
+                    ws.send(msg);
+                    Input.setText("");
+                }
             }
         });
 
