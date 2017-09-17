@@ -1,8 +1,10 @@
 package me.edgeconsult.chat;
 
+import android.app.NotificationManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private ListView MessagesWrapper;
     private EditText Input;
     private Button SendButton;
+
+    private NotificationCompat.Builder mBuilder;
+    NotificationManager mNotificationManager;
 
     private OkHttpClient client;
 
@@ -109,6 +114,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.user);
+        mBuilder.setContentTitle("Notification Alert, Click Me!");
+        mBuilder.setContentText("Hi, This is Android Notification Detail!");
+
+        mNotificationManager = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
+
         client = new OkHttpClient();
 
         Request request = new Request.Builder().url("wss://owncloudhk.net").build();
@@ -119,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
                         "{"
                                 + " \"type\": \"login\","
                                 + " \"data\": {"
-                                + "             \"username\": \"ANDROID\","
-                                + "             \"password\": \"logcat\""
+                                + "             \"username\": \"test user\","
+                                + "             \"password\": \"test\""
                                 + "           }"
                                 + "}";
                 Log.i(MAIN_ACTIVITY_TAG, jString);
@@ -141,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mNotificationManager.notify(1, mBuilder.build());
                                     Toast.makeText(getApplicationContext(),
                                             username + " joined",
                                             Toast.LENGTH_LONG).show();
@@ -151,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mNotificationManager.notify(2, mBuilder.build());
                                     Toast.makeText(getApplicationContext(),
                                             "user left",
                                             Toast.LENGTH_LONG).show();
@@ -164,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mNotificationManager.notify(3, mBuilder.build());
                                     messagesAdapter.add(new Message(message_username, message_timestamp, message_body));
                                 }
                             });
