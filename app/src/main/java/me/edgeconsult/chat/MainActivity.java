@@ -1,14 +1,11 @@
 package me.edgeconsult.chat;
 
-import android.app.Dialog;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
-
-    // private TextView MessagesWrapper;
 
     private ListView MessagesWrapper;
     private EditText Input;
@@ -188,31 +183,12 @@ public class MainActivity extends AppCompatActivity {
 
         SendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                messagesAdapter.add(new Message("윤안톤", 54664545L, Input.getText().toString()));
+                messagesList.add(new Message("윤안톤", 54664545L, Input.getText().toString()));
+                messagesAdapter.notifyDataSetChanged();
                 Input.setText("");
             }
         });
-/*
-        MessagesWrapper.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView,
-                                    View view, int position, long rowId) {
-                //showInputBox(messagesList.get(position),position);
-                final String message = "You clicked on " + messages[position].body;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                message,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-                messagesList.add(new Message("iunanton", 5466, "Hello"));
-                messagesAdapter.notifyDataSetChanged();
 
-            }
-        });
-*/
         client = new OkHttpClient();
 
         Request request = new Request.Builder().url("wss://owncloudhk.net").build();

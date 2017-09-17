@@ -8,7 +8,9 @@
         android:id="@+id/messages_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1.0"/>
+        android:layout_weight="1.0"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true" />
 
     <LinearLayout
         android:orientation="horizontal"
