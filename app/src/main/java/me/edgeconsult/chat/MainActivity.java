@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         ((ViewHolder) convertView.getTag()).body;
 
                 username.setText(currentMessage.getUsername());
-                time.setText(String.valueOf(currentMessage.getTime()));
+                time.setText(String.valueOf(DateFormat.format("HH:MM", new Date(currentMessage.getTime())).toString()));
                 body.setText(currentMessage.getBody());
 
                 return convertView;
@@ -132,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
                         "{"
                                 + " \"type\": \"login\","
                                 + " \"data\": {"
-                                + "             \"username\": \"test user\","
-                                + "             \"password\": \"test\""
+                                + "             \"username\": \"ANDROID\","
+                                + "             \"password\": \"logcat\""
                                 + "           }"
                                 + "}";
                 Log.i(MAIN_ACTIVITY_TAG, jString);
