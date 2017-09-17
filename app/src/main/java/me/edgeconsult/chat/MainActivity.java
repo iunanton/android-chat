@@ -41,96 +41,14 @@ public class MainActivity extends AppCompatActivity {
 
     private OkHttpClient client;
 
-    private Message[] messages = {
-            new Message("헬로 키티", 44883L, "Welcome to Android Chat!"),
-            new Message("헬로 키티", 44883L, "서울치킨최고"),
-            new Message("헬로 키티", 44883L, "Apple"),
-            new Message("헬로 키티", 44883L, "사과"),
-            new Message("헬로 키티", 44883L, "배"),
-            new Message("헬로 키티", 44883L, "Orange"),
-            new Message("헬로 키티", 44883L, "Banana"),
-            new Message("헬로 키티", 44883L, "초코바나나"),
-            new Message("헬로 키티", 44883L, "Pineapple"),
-            new Message("헬로 키티", 44883L, "Lychee"),
-            new Message("헬로 키티", 44883L, "바나나우유"),
-            new Message("헬로 키티", 44883L, "Blueberry"),
-            new Message("헬로 키티", 44883L, "Lime"),
-            new Message("헬로 키티", 44883L, "Mango"),
-            new Message("헬로 키티", 44883L, "Strawberry"),
-            new Message("헬로 키티", 44883L, "Pomelo"),
-            new Message("헬로 키티", 44883L, "Grapefruit"),
-            new Message("헬로 키티", 44883L, "Peach"),
-            new Message("헬로 키티", 44883L, "Pear")
-    };
+    private WebSocket ws;
 
     private ArrayList<Message> messagesList;
     private ArrayAdapter<Message> messagesAdapter;
 
     private final class EchoWebSocketListener extends WebSocketListener {
-        private static final int NORMAL_CLOSURE_STATUS = 1000;
 
-        private final static String jString =
-                "{"
-                        + " \"type\": \"login\","
-                        + " \"data\": {"
-                        + "             \"username\": \"ANDROID\","
-                        + "             \"password\": \"logcat\""
-                        + "           }"
-                        + "}";
 
-        @Override
-        public void onOpen(WebSocket webSocket, Response response) {
-            Log.i(MAIN_ACTIVITY_TAG, jString);
-            webSocket.send(jString);
-            }
-
-        @Override
-        public void onMessage(WebSocket webSocket, String text) {
-            output(text);
-            try {
-                JSONObject message = new JSONObject(text);
-                String type = message.getString("type");
-                JSONObject data = message.getJSONObject("data");
-                switch (type) {
-                    case "context":
-                        output(type);
-                        break;
-                    case "userJoined":
-                        final String username = data.getString("username");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(),
-                                        username + " joined",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        break;
-                    case "userLeft":
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(),
-                                        "user left",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        break;
-                    default:
-                        break;
-                }
-            } catch (final JSONException e) {
-                Log.e(MAIN_ACTIVITY_TAG, "Json parsing error: " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Json parsing error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }
     }
 
     @Override
@@ -138,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        messagesList = new ArrayList<>(Arrays.asList(messages));
+        messagesList = new ArrayList<>();
 
         messagesAdapter =
                 new ArrayAdapter<Message>(this,
@@ -149,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             public View getView(int position,
                                 View convertView,
                                 @NonNull ViewGroup parent) {
-                Message currentMessage = messagesList.get(position); // !!!!! 버그　여기　있네！ !!!!!!!
+                Message currentMessage = messagesList.get(position);
                 if (convertView == null) {
                     convertView = getLayoutInflater()
                             .inflate(R.layout.messages_list_item, parent, false);
@@ -175,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        // messagesAdapter.setNotifyOnChange(true);
+
         MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
         Input = (EditText) findViewById(R.id.input);
         SendButton = (Button) findViewById(R.id.send_button);
@@ -183,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
         SendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                messagesList.add(new Message("윤안톤", 54664545L, Input.getText().toString()));
-                messagesAdapter.notifyDataSetChanged();
+                String msg = "{ \"type\": \"message\", \"data\": { \"messageBody\": \"" + Input.getText().toString() + "\" } }";
+                ws.send(msg);
                 Input.setText("");
             }
         });
@@ -192,18 +112,80 @@ public class MainActivity extends AppCompatActivity {
         client = new OkHttpClient();
 
         Request request = new Request.Builder().url("wss://owncloudhk.net").build();
-        EchoWebSocketListener listener = new EchoWebSocketListener();
-        WebSocket ws = client.newWebSocket(request, listener);
+        WebSocketListener listener = new WebSocketListener() {
+            @Override
+            public void onOpen(WebSocket webSocket, Response response) {
+                final String jString =
+                        "{"
+                                + " \"type\": \"login\","
+                                + " \"data\": {"
+                                + "             \"username\": \"ANDROID\","
+                                + "             \"password\": \"logcat\""
+                                + "           }"
+                                + "}";
+                Log.i(MAIN_ACTIVITY_TAG, jString);
+                webSocket.send(jString);
+            }
+
+            @Override
+            public void onMessage(WebSocket webSocket, String text) {
+                try {
+                    final JSONObject message = new JSONObject(text);
+                    final String type = message.getString("type");
+                    JSONObject data = message.getJSONObject("data");
+                    switch (type) {
+                        case "context":
+                            break;
+                        case "userJoined":
+                            final String username = data.getString("username");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),
+                                            username + " joined",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            break;
+                        case "userLeft":
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),
+                                            "user left",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            break;
+                        case "messageAdd":
+                            final String message_body = data.getString("messageBody");
+                            final Long message_timestamp = data.getLong("timestamp");
+                            final String message_username = data.getString("username");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    messagesAdapter.add(new Message(message_username, message_timestamp, message_body));
+                                }
+                            });
+                            break;
+                        default:
+                            break;
+                    }
+                } catch (final JSONException e) {
+                    Log.e(MAIN_ACTIVITY_TAG, "Json parsing error: " + e.getMessage());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    "Json parsing error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        };
+        ws = client.newWebSocket(request, listener);
 
         client.dispatcher().executorService().shutdown();
-    }
-
-    private void output(final String txt) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //MessagesWrapper.setText(txt);
-            }
-        });
     }
 }
