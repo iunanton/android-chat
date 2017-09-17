@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -146,8 +147,24 @@ public class MainActivity extends AppCompatActivity {
                     final String type = message.getString("type");
                     JSONObject data = message.getJSONObject("data");
                     switch (type) {
-                        case "context":
+                        case "context": {
+                            final JSONArray users = data.getJSONArray("users");
+                            final JSONArray messages = data.getJSONArray("messages");
+                            for (int i = 0; i < messages.length(); ++i) {
+                                JSONObject item = messages.getJSONObject(i);
+                                final String username = item.getString("username");
+                                final Long timestamp = item.getLong("timestamp");
+                                final String messageBody = item.getString("messageBody");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mNotificationManager.notify(3, mBuilder.build());
+                                        messagesAdapter.add(new Message(username, timestamp, messageBody));
+                                    }
+                                });
+                            }
                             break;
+                        }
                         case "userJoined":
                             final String username = data.getString("username");
                             runOnUiThread(new Runnable() {
