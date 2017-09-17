@@ -30,18 +30,6 @@ import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
 /*
-    private static class Message {
-        String username;
-        Integer time;
-        String body;
-
-        Message(String username, Integer time, String body) {
-            this.username = username;
-            this.time = time;
-            this.body = body;
-        }
-    }
-
     private static class ViewHolder{
         TextView username;
         TextView time;
@@ -173,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             public View getView(int position,
                                 View convertView,
                                 @NonNull ViewGroup parent) {
-                Message currentMessage = messages[position];
+                Message currentMessage = messages[position]; !!!!! 버그　여기　있네！
                 // Inflate only once
                 if (convertView == null) {
                     convertView = getLayoutInflater()
