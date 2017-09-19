@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +20,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -97,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
                         ((ViewHolder) convertView.getTag()).body;
 
                 username.setText(currentMessage.getUsername());
-                time.setText(String.valueOf(DateFormat.format("HH:MM", new Date(currentMessage.getTime())).toString()));
+                Date date = new Date(currentMessage.getTime());
+                time.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(date));
                 body.setText(currentMessage.getBody());
 
                 return convertView;
