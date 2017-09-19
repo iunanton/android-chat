@@ -1,6 +1,7 @@
 package me.edgeconsult.chat;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import okhttp3.OkHttpClient;
@@ -31,6 +31,10 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
+
+    private NotificationManager mNotificationManager;
+    private static int notificationID = 1;
+    private PendingIntent mPendingIntent;
 
     private static class ViewHolder{
         TextView username;
@@ -44,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText Input;
     private Button SendButton;
 
-    private NotificationCompat.Builder mBuilder;
-    NotificationManager mNotificationManager;
+    // private NotificationCompat.Builder mBuilder;
 
     private OkHttpClient client;
 
@@ -122,12 +125,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.user);
-        mBuilder.setContentTitle("Notification Alert, Click Me!");
-        mBuilder.setContentText("Hi, This is Android Notification Detail!");
-
-        mNotificationManager = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mPendingIntent = PendingIntent.getActivity(this, 0, getIntent(), PendingIntent.FLAG_UPDATE_CURRENT);
 
         client = new OkHttpClient();
 
@@ -165,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mNotificationManager.notify(3, mBuilder.build());
                                         messagesAdapter.add(new Message(username, timestamp, messageBody));
                                     }
                                 });
@@ -177,7 +175,15 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mNotificationManager.notify(1, mBuilder.build());
+                                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
+                                    mBuilder.setSmallIcon(R.drawable.ic_stat_name);
+                                    mBuilder.setColor(0xFF00CCCC);
+                                    mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                    mBuilder.setContentTitle("New user joined");
+                                    mBuilder.setContentText(username + " joined! Say \"Hi\" to him!");
+                                    mBuilder.setContentIntent(mPendingIntent);
+                                    mBuilder.setAutoCancel(true);
+                                    mNotificationManager.notify(notificationID, mBuilder.build());
                                     Toast.makeText(getApplicationContext(),
                                             username + " joined",
                                             Toast.LENGTH_LONG).show();
@@ -188,7 +194,15 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mNotificationManager.notify(2, mBuilder.build());
+                                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
+                                    mBuilder.setSmallIcon(R.drawable.ic_stat_name);
+                                    mBuilder.setColor(0xFF00CCCC);
+                                    mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                    mBuilder.setContentTitle("User left");
+                                    mBuilder.setContentText("One user just left chat..");
+                                    mBuilder.setContentIntent(mPendingIntent);
+                                    mBuilder.setAutoCancel(true);
+                                    mNotificationManager.notify(notificationID, mBuilder.build());
                                     Toast.makeText(getApplicationContext(),
                                             "user left",
                                             Toast.LENGTH_LONG).show();
@@ -202,7 +216,15 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mNotificationManager.notify(3, mBuilder.build());
+                                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
+                                    mBuilder.setSmallIcon(R.drawable.ic_stat_name);
+                                    mBuilder.setColor(0xFF00CCCC);
+                                    mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                    mBuilder.setContentTitle("New message");
+                                    mBuilder.setContentText(message_username + ": " + message_body);
+                                    mBuilder.setContentIntent(mPendingIntent);
+                                    mBuilder.setAutoCancel(true);
+                                    mNotificationManager.notify(notificationID, mBuilder.build());
                                     messagesAdapter.add(new Message(message_username, message_timestamp, message_body));
                                 }
                             });
