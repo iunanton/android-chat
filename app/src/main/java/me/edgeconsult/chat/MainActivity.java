@@ -2,6 +2,8 @@ package me.edgeconsult.chat;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private NotificationManager mNotificationManager;
     private static int notificationID = 1;
     private PendingIntent mPendingIntent;
+
+    private Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
     private static class ViewHolder{
         TextView username;
@@ -136,14 +140,7 @@ public class MainActivity extends AppCompatActivity {
         WebSocketListener listener = new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
-                final String jString =
-                        "{"
-                                + " \"type\": \"login\","
-                                + " \"data\": {"
-                                + "             \"username\": \"ANDROID\","
-                                + "             \"password\": \"logcat\""
-                                + "           }"
-                                + "}";
+                final String jString = "{\"type\":\"login\",\"data\":{\"username\":\"ANDROID\",\"password\":\"logcat\"}}";
                 Log.i(MAIN_ACTIVITY_TAG, jString);
                 webSocket.send(jString);
             }
@@ -181,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                                     mBuilder.setSmallIcon(R.drawable.ic_stat_name);
                                     mBuilder.setColor(0xFF00CCCC);
                                     mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                    mBuilder.setSound(uri);
                                     mBuilder.setContentTitle("New user joined");
                                     mBuilder.setContentText(username + " joined! Say \"Hi\" to him!");
                                     mBuilder.setContentIntent(mPendingIntent);
@@ -200,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
                                     mBuilder.setSmallIcon(R.drawable.ic_stat_name);
                                     mBuilder.setColor(0xFF00CCCC);
                                     mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                    mBuilder.setSound(uri);
                                     mBuilder.setContentTitle("User left");
                                     mBuilder.setContentText("One user just left chat..");
                                     mBuilder.setContentIntent(mPendingIntent);
@@ -222,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                                     mBuilder.setSmallIcon(R.drawable.ic_stat_name);
                                     mBuilder.setColor(0xFF00CCCC);
                                     mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                    mBuilder.setSound(uri);
                                     mBuilder.setContentTitle("New message");
                                     mBuilder.setContentText(message_username + ": " + message_body);
                                     mBuilder.setContentIntent(mPendingIntent);
