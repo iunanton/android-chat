@@ -82,7 +82,15 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences credentials = this.getPreferences(Context.MODE_PRIVATE);
         username = credentials.getString(getString(R.string.saved_username), null);
         password = credentials.getString(getString(R.string.saved_password), null);
+            }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (username == null || password == null) {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivityForResult(i, request_code);
+        }
         messagesList = new ArrayList<>();
 
         messagesAdapter =
@@ -90,36 +98,36 @@ public class MainActivity extends AppCompatActivity {
                         R.layout.messages_list_item,
                         messagesList) {
 
-            @NonNull
-            public View getView(int position,
-                                View convertView,
-                                @NonNull ViewGroup parent) {
-                Message currentMessage = messagesList.get(position);
-                if (convertView == null) {
-                    convertView = getLayoutInflater()
-                            .inflate(R.layout.messages_list_item, parent, false);
-                    ViewHolder viewHolder = new ViewHolder();
-                    viewHolder.username = convertView.findViewById(R.id.message_username);
-                    viewHolder.time = convertView.findViewById(R.id.message_time);
-                    viewHolder.body = convertView.findViewById(R.id.message_body);
-                    convertView.setTag(viewHolder);
-                }
+                    @NonNull
+                    public View getView(int position,
+                                        View convertView,
+                                        @NonNull ViewGroup parent) {
+                        Message currentMessage = messagesList.get(position);
+                        if (convertView == null) {
+                            convertView = getLayoutInflater()
+                                    .inflate(R.layout.messages_list_item, parent, false);
+                            ViewHolder viewHolder = new ViewHolder();
+                            viewHolder.username = convertView.findViewById(R.id.message_username);
+                            viewHolder.time = convertView.findViewById(R.id.message_time);
+                            viewHolder.body = convertView.findViewById(R.id.message_body);
+                            convertView.setTag(viewHolder);
+                        }
 
-                TextView username =
-                        ((ViewHolder) convertView.getTag()).username;
-                TextView time =
-                        ((ViewHolder) convertView.getTag()).time;
-                TextView body =
-                        ((ViewHolder) convertView.getTag()).body;
+                        TextView username =
+                                ((ViewHolder) convertView.getTag()).username;
+                        TextView time =
+                                ((ViewHolder) convertView.getTag()).time;
+                        TextView body =
+                                ((ViewHolder) convertView.getTag()).body;
 
-                username.setText(currentMessage.getUsername());
-                Date date = new Date(currentMessage.getTime());
-                time.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(date));
-                body.setText(currentMessage.getBody());
+                        username.setText(currentMessage.getUsername());
+                        Date date = new Date(currentMessage.getTime());
+                        time.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(date));
+                        body.setText(currentMessage.getBody());
 
-                return convertView;
-            }
-        };
+                        return convertView;
+                    }
+                };
 
         // messagesAdapter.setNotifyOnChange(true);
 
@@ -262,15 +270,6 @@ public class MainActivity extends AppCompatActivity {
         ws = client.newWebSocket(request, listener);
 
         client.dispatcher().executorService().shutdown();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (username == null || password == null) {
-            Intent i = new Intent(this, LoginActivity.class);
-            startActivityForResult(i, request_code);
-        }
     }
 
     @Override
