@@ -2,6 +2,9 @@ package me.edgeconsult.chat;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -34,6 +37,10 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String username = null;
+    private String password = null;
+    private int request_code = 1;
 
     private NotificationManager mNotificationManager;
     private static int notificationID = 1;
@@ -71,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences credentials = this.getPreferences(Context.MODE_PRIVATE);
+        username = credentials.getString(getString(R.string.saved_username), null);
+        password = credentials.getString(getString(R.string.saved_password), null);
 
         messagesList = new ArrayList<>();
 
@@ -140,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
         WebSocketListener listener = new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
-                final String jString = "{\"type\":\"login\",\"data\":{\"username\":\"test user\",\"password\":\"test\"}}";
+                final String jString = "{\"type\":\"login\",\"data\":{\"username\":\"" + username
+                        + "\",\"password\":\"" + password + "\"}}";
                 Log.i(MAIN_ACTIVITY_TAG, jString);
                 webSocket.send(jString);
             }
@@ -255,30 +267,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Toast.makeText(this, "onStart", Toast.LENGTH_SHORT).show();
+        if (username == null || password == null) {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivityForResult(i, request_code);
+        }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == request_code) {
+            if (resultCode == RESULT_OK) {
+                username = data.getStringExtra("username");
+                password = data.getStringExtra("password");
+                SharedPreferences credentials = this.getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = credentials.edit();
+                editor.putString(getString(R.string.saved_username), username);
+                editor.putString(getString(R.string.saved_password), password);
+                editor.commit();
+            }
+        }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Toast.makeText(this, "onRestart", Toast.LENGTH_SHORT).show();
-    }
 }

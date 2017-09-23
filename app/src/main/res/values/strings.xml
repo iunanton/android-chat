@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">온라인 채팅</string>
-    <string name="message_username">헬로 키티</string>
+    <string name="app_name">Chat</string>
+    <string name="message_username">username</string>
     <string name="message_time">15:19</string>
     <string name="message_body">Welcome to Android Chat!</string>
-    <string name="send_button">전송</string>
-    <string name="done_button">완료</string>
-    <string name="copyright">Copyright &#169; 2016-2017 edgeconsult.ME</string>
+    <string name="send_button">Send</string>
+    <string name="done_button">Done</string>
+    <string name="copyright">Copyright &#169; 2016-2017 Edge Consulting</string>
+    <string name="saved_username">USERNAME</string>
+    <string name="saved_password">PASSWORD</string>
 </resources>
