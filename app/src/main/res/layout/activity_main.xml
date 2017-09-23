@@ -23,14 +23,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:hint="Write a message"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/send_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_weight="0.0"
-            android:text="@string/send_button" />
+            android:contentDescription="@string/send_button"
+            android:src="@drawable/ic_action_name" />
     </LinearLayout>
 </LinearLayout>

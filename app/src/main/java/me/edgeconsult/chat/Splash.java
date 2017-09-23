@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 public class Splash extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_LENGTH = 2000;
+    private final int SPLASH_DISPLAY_LENGTH = 1500;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

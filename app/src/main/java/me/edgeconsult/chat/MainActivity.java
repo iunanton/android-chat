@@ -2,7 +2,6 @@ package me.edgeconsult.chat;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -13,8 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView MessagesWrapper;
     private EditText Input;
-    private Button SendButton;
+    private ImageButton SendButton;
 
     // private NotificationCompat.Builder mBuilder;
 
@@ -115,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
         MessagesWrapper = (ListView) findViewById(R.id.messages_wrapper);
         Input = (EditText) findViewById(R.id.input);
-        SendButton = (Button) findViewById(R.id.send_button);
+        SendButton = (ImageButton) findViewById(R.id.send_button);
 
         MessagesWrapper.setAdapter(messagesAdapter);
 
