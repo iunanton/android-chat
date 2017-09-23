@@ -2,6 +2,7 @@ package me.edgeconsult.chat;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         WebSocketListener listener = new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
-                final String jString = "{\"type\":\"login\",\"data\":{\"username\":\"ANDROID\",\"password\":\"logcat\"}}";
+                final String jString = "{\"type\":\"login\",\"data\":{\"username\":\"test user\",\"password\":\"test\"}}";
                 Log.i(MAIN_ACTIVITY_TAG, jString);
                 webSocket.send(jString);
             }
@@ -250,5 +251,35 @@ public class MainActivity extends AppCompatActivity {
         ws = client.newWebSocket(request, listener);
 
         client.dispatcher().executorService().shutdown();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Toast.makeText(this, "onStart", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Toast.makeText(this, "onRestart", Toast.LENGTH_SHORT).show();
     }
 }
