@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         SendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String ed_text = Input.getText().toString().trim();
+                String ed_text = Input.getText().toString().trim().replaceAll("\\r|\\n", " ");
                 if (ed_text.isEmpty() || ed_text.length() == 0 || ed_text.equals("")) {
                     //EditText is empty
                 } else {
