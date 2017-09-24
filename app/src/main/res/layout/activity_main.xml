@@ -24,6 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:inputType="textMultiLine"
+            android:maxLength="175"
             android:hint="Write a message"/>
 
         <ImageButton
