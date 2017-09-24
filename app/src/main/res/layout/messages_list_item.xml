@@ -1,56 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="3dp"
     android:paddingBottom="3dp">
 
     <ImageView
+        android:id="@+id/message_avatar"
+        android:contentDescription="avatar"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:layout_weight="0.0"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_marginTop="2dp"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
         android:src="@drawable/user"/>
+    <TextView
+        android:id="@+id/message_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/message_avatar"
+        android:layout_toRightOf="@+id/message_avatar"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:textColor="#3B5897"
+        android:text="@string/message_username"/>
+    <TextView
+        android:id="@+id/message_time"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/message_username"
+        android:layout_toRightOf="@+id/message_username"
+        android:textSize="9sp"
+        android:textColor="#898989"
+        android:text="@string/message_time"/>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <TextView
+        android:id="@+id/message_body"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.0">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="14dp">
-
-            <TextView
-                android:id="@+id/message_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="11dp"
-                android:textStyle="bold"
-                android:textColor="#3B5897"
-                android:text="@string/message_username"/>
-
-            <TextView
-                android:id="@+id/message_time"
-                android:layout_marginLeft="3dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="9dp"
-                android:textColor="#898989"
-                android:text="@string/message_time"/>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/message_body"
-            android:layout_marginTop="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15dp"
-            android:text="@string/message_body"/>
-    </LinearLayout>
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/message_avatar"
+        android:layout_toRightOf="@+id/message_avatar"
+        android:layout_below="@+id/message_username"
+        android:textSize="15sp"
+        android:text="@string/message_body"/>
+</RelativeLayout>
