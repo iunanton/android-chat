@@ -2,6 +2,7 @@ package me.edgeconsult.chat;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
 import android.accounts.OnAccountsUpdateListener;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -40,11 +41,9 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity implements OnAccountsUpdateListener {
-    private AccountManager accountManager;
-
-    private String username = null;
-    private String password = null;
-    private int request_code = 1;
+    private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
+    private AccountManager accountManager = null;
+    private String authtoken = "";
 
     private NotificationManager mNotificationManager;
     private static int notificationID = 1;
@@ -57,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
         TextView time;
         TextView body;
     }
-
-    private static final String MAIN_ACTIVITY_TAG = MainActivity.class.getSimpleName();
 
     private ListView MessagesWrapper;
     private EditText Input;
@@ -83,34 +80,17 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // SharedPreferences credentials = this.getPreferences(Context.MODE_PRIVATE);
-        // username = credentials.getString(getString(R.string.saved_username), null);
-        // password = credentials.getString(getString(R.string.saved_password), null);
         accountManager = AccountManager.get(getApplicationContext());
         if (accountManager.getAccounts().length > 0) {
             // we save only 1 account
             Account account = accountManager.getAccounts()[0];
-            final String str = accountManager.toString();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), str, Toast.LENGTH_SHORT).show();
-                }
-            });
-            /*Account[] account = am.getAccountsByType(AuthenticatorActivity.ACCOUNT_TYPE);
-            Log.i("AccountManager", am.toString());
-            Log.i("AccountManager", am.getAccountsByType(AuthenticatorActivity.ACCOUNT_TYPE).toString());
-            for (int i=0; i<account.length; i++) {
-                Log.i("AccountManager", account[i].toString());
-                String authTokenType = "";
-                final AccountManagerFuture<Bundle> future = am.getAuthToken(account[i], authTokenType, null, this, null,null);
-                try {
-                    Bundle bnd = future.getResult();
-                    final String authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
-                    Log.i("AccountManager", authtoken);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            String authTokenType = "bearer";
+            /*final AccountManagerFuture<Bundle> future = accountManager.getAuthToken(account, authTokenType, null, this, null,null);
+            try {
+                Bundle bnd = future.getResult();
+                authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
+            } catch (Exception e) {
+                e.printStackTrace();
             }*/
         }
     }
@@ -118,10 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
     @Override
     protected void onStart() {
         super.onStart();
-        /*if (username == null || password == null) {
-            Intent i = new Intent(this, LoginActivity.class);
-            startActivityForResult(i, request_code);
-        }
+
         messagesList = new ArrayList<>();
 
         messagesAdapter =
@@ -167,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
         SendButton = (ImageButton) findViewById(R.id.send_button);
 
         MessagesWrapper.setAdapter(messagesAdapter);
-
+/*
         SendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String ed_text = Input.getText().toString().trim().replaceAll("\\r|\\n", " ");

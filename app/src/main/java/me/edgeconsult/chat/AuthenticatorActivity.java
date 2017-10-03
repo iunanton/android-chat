@@ -38,7 +38,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private Button btn_login;
 
     private AccountManager mAccountManager;
-    private String mAuthTokenType = "user";
+    private String mAuthTokenType = "bearer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +72,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         username = ((EditText) findViewById(R.id.input_username)).getText().toString();
         password = ((EditText) findViewById(R.id.input_password)).getText().toString();
 
-        // Create async task here
         new AsyncTask<Void, Void, Intent>() {
             @Override
             protected Intent doInBackground(Void... voids) {
@@ -82,7 +81,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 HttpsURLConnection connection = null;
                 try {
                     urlParameters = "grant_type=password&username=" + URLEncoder.encode(username, "UTF-8") + "&password=" + URLEncoder.encode(password, "UTF-8");
-                    // Log.i(TAG, urlParameters);
                     url = new URL(targetURL);
                     connection = (HttpsURLConnection)url.openConnection();
                     connection.setRequestMethod("POST");
@@ -102,7 +100,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     String line;
                     StringBuffer response = new StringBuffer();
                     while((line = rd.readLine()) != null) {
-                        Log.i(TAG, line);
                         response.append(line);
                         response.append('\r');
                     }
@@ -110,7 +107,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     JSONObject json = new JSONObject(response.toString());
                     if (json.has("access_token")) {
                         String authtoken = json.getString("access_token");
-                        Log.i(TAG, authtoken);
                         final Intent res = new Intent();
                         res.putExtra(AccountManager.KEY_ACCOUNT_NAME, username);
                         res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.account_type));
@@ -143,7 +139,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         btn_login.setEnabled(true);
         String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
         final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
-        // Log.i("log",account.toString());
         String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
         String authtokenType = mAuthTokenType;
         mAccountManager.addAccountExplicitly(account, null, null);
