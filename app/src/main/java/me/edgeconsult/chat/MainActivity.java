@@ -1,5 +1,8 @@
 package me.edgeconsult.chat;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -36,7 +39,8 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnAccountsUpdateListener {
+    private AccountManager accountManager;
 
     private String username = null;
     private String password = null;
@@ -79,15 +83,42 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences credentials = this.getPreferences(Context.MODE_PRIVATE);
-        username = credentials.getString(getString(R.string.saved_username), null);
-        password = credentials.getString(getString(R.string.saved_password), null);
-            }
+        // SharedPreferences credentials = this.getPreferences(Context.MODE_PRIVATE);
+        // username = credentials.getString(getString(R.string.saved_username), null);
+        // password = credentials.getString(getString(R.string.saved_password), null);
+        accountManager = AccountManager.get(getApplicationContext());
+        if (accountManager.getAccounts().length > 0) {
+            // we save only 1 account
+            Account account = accountManager.getAccounts()[0];
+            final String str = accountManager.toString();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), str, Toast.LENGTH_SHORT).show();
+                }
+            });
+            /*Account[] account = am.getAccountsByType(AuthenticatorActivity.ACCOUNT_TYPE);
+            Log.i("AccountManager", am.toString());
+            Log.i("AccountManager", am.getAccountsByType(AuthenticatorActivity.ACCOUNT_TYPE).toString());
+            for (int i=0; i<account.length; i++) {
+                Log.i("AccountManager", account[i].toString());
+                String authTokenType = "";
+                final AccountManagerFuture<Bundle> future = am.getAuthToken(account[i], authTokenType, null, this, null,null);
+                try {
+                    Bundle bnd = future.getResult();
+                    final String authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
+                    Log.i("AccountManager", authtoken);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }*/
+        }
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (username == null || password == null) {
+        /*if (username == null || password == null) {
             Intent i = new Intent(this, LoginActivity.class);
             startActivityForResult(i, request_code);
         }
@@ -269,23 +300,29 @@ public class MainActivity extends AppCompatActivity {
         };
         ws = client.newWebSocket(request, listener);
 
-        client.dispatcher().executorService().shutdown();
+        client.dispatcher().executorService().shutdown();*/
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == request_code) {
-            if (resultCode == RESULT_OK) {
-                username = data.getStringExtra("username");
-                password = data.getStringExtra("password");
-                SharedPreferences credentials = this.getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = credentials.edit();
-                editor.putString(getString(R.string.saved_username), username);
-                editor.putString(getString(R.string.saved_password), password);
-                editor.commit();
-            }
+    protected void onResume() {
+        super.onResume();
+        accountManager.addOnAccountsUpdatedListener(this, null, true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        accountManager.removeOnAccountsUpdatedListener(this);
+    }
+
+    @Override
+    public void onAccountsUpdated(Account[] accounts) {
+        if (accounts.length > 0) {
+            return;
         }
+        Intent intent = new Intent(this, AuthenticatorActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }
