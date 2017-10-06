@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,9 +22,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
-
-import me.edgeconsult.chat.MainActivity;
-import me.edgeconsult.chat.R;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
@@ -60,10 +56,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private void login() {
         // Log.d(TAG, "Invoked login function");
 
-        /*if (!validate()) {
-            onLoginFailed();
+        if (!validate()) {
+            // onLoginFailed();
             return;
-        }*/
+        }
 
         btn_login.setEnabled(false);
         usernameInputLayout.setEnabled(false);
@@ -149,4 +145,26 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         startActivity(new Intent(this, MainActivity.class));
     }
 
+    public boolean validate() {
+        boolean valid = true;
+
+        String username = ((EditText) findViewById(R.id.input_username)).getText().toString();
+        String password = ((EditText) findViewById(R.id.input_password)).getText().toString();
+
+        if (username.isEmpty() || username.length() < 4) {
+            ((EditText) findViewById(R.id.input_username)).setError("more than 4 alphanumeric characters");
+            valid = false;
+        } else {
+            ((EditText) findViewById(R.id.input_username)).setError(null);
+        }
+
+        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+            ((EditText) findViewById(R.id.input_password)).setError("between 4 and 10 alphanumeric characters");
+            valid = false;
+        } else {
+            ((EditText) findViewById(R.id.input_password)).setError(null);
+        }
+
+        return valid;
+    }
 }

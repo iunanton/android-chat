@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
     private AccountManager accountManager = null;
     private String authtoken = "";
 
+    private boolean activityOnResume = false;
+
     private NotificationManager mNotificationManager;
     private static int notificationID = 1;
     private PendingIntent mPendingIntent;
@@ -137,7 +139,8 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
                                                 mBuilder.setContentText(username + " joined! Say \"Hi\" to him!");
                                                 mBuilder.setContentIntent(mPendingIntent);
                                                 mBuilder.setAutoCancel(true);
-                                                mNotificationManager.notify(notificationID, mBuilder.build());
+                                                if (!activityOnResume)
+                                                    mNotificationManager.notify(notificationID, mBuilder.build());
                                                 Toast.makeText(getApplicationContext(), username + " joined", Toast.LENGTH_LONG).show();
                                             }
                                         });
@@ -155,7 +158,8 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
                                                 mBuilder.setContentText("One user just left chat..");
                                                 mBuilder.setContentIntent(mPendingIntent);
                                                 mBuilder.setAutoCancel(true);
-                                                mNotificationManager.notify(notificationID, mBuilder.build());
+                                                if (!activityOnResume)
+                                                    mNotificationManager.notify(notificationID, mBuilder.build());
                                                 Toast.makeText(getApplicationContext(), "user left", Toast.LENGTH_LONG).show();
                                             }
                                         });
@@ -176,7 +180,8 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
                                                 mBuilder.setContentText(message_username + ": " + message_body);
                                                 mBuilder.setContentIntent(mPendingIntent);
                                                 mBuilder.setAutoCancel(true);
-                                                mNotificationManager.notify(notificationID, mBuilder.build());
+                                                if (!activityOnResume)
+                                                    mNotificationManager.notify(notificationID, mBuilder.build());
                                                 messagesAdapter.add(new Message(message_username, message_timestamp, message_body));
                                             }
                                         });
@@ -260,12 +265,14 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
     @Override
     protected void onResume() {
         super.onResume();
+        activityOnResume = true;
         accountManager.addOnAccountsUpdatedListener(this, null, true);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        activityOnResume = false;
         accountManager.removeOnAccountsUpdatedListener(this);
     }
 
