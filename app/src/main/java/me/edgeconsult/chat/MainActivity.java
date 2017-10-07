@@ -83,130 +83,135 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        accountManager = AccountManager.get(this);
 
-        accountManager = AccountManager.get(getApplicationContext());
-        if (accountManager.getAccounts().length > 0) {
-            Account account = accountManager.getAccounts()[0];
-            String authTokenType = "bearer";
-            accountManager.getAuthToken(account, authTokenType, null, this, new AccountManagerCallback<Bundle> () {
-                @Override
-                public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
-                    try {
-                        Bundle bundle = accountManagerFuture.getResult();
-                        authtoken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    client = new OkHttpClient();
-                    Request request = new Request.Builder().url("wss://owncloudhk.net/app?access_token=" + authtoken).build();
-                    WebSocketListener listener = new WebSocketListener() {
 
-                        @Override
-                        public void onMessage(WebSocket webSocket, String text) {
-                            try {
-                                final JSONObject message = new JSONObject(text);
-                                final String type = message.getString("type");
-                                JSONObject data = message.getJSONObject("data");
-                                switch (type) {
-                                    case "context": {
-                                        final JSONArray users = data.getJSONArray("users");
-                                        final JSONArray messages = data.getJSONArray("messages");
-                                        for (int i = 0; i < messages.length(); ++i) {
-                                            JSONObject item = messages.getJSONObject(i);
-                                            final String username = item.getString("username");
-                                            final Long timestamp = item.getLong("timestamp");
-                                            final String messageBody = item.getString("messageBody");
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    messagesAdapter.add(new Message(username, timestamp, messageBody));
-                                                }
-                                            });
-                                        }
-                                        break;
-                                    }
-                                    case "userJoined":
-                                        final String username = data.getString("username");
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
-                                                mBuilder.setSmallIcon(R.drawable.ic_stat_name);
-                                                mBuilder.setColor(0xFF00CCCC);
-                                                mBuilder.setLights(0xFF00CCCC, 500, 1500);
-                                                mBuilder.setSound(uri);
-                                                mBuilder.setContentTitle("New user joined");
-                                                mBuilder.setContentText(username + " joined! Say \"Hi\" to him!");
-                                                mBuilder.setContentIntent(mPendingIntent);
-                                                mBuilder.setAutoCancel(true);
-                                                if (!activityOnResume)
-                                                    mNotificationManager.notify(notificationID, mBuilder.build());
-                                                Toast.makeText(getApplicationContext(), username + " joined", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                                        break;
-                                    case "userLeft":
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
-                                                mBuilder.setSmallIcon(R.drawable.ic_stat_name);
-                                                mBuilder.setColor(0xFF00CCCC);
-                                                mBuilder.setLights(0xFF00CCCC, 500, 1500);
-                                                mBuilder.setSound(uri);
-                                                mBuilder.setContentTitle("User left");
-                                                mBuilder.setContentText("One user just left chat..");
-                                                mBuilder.setContentIntent(mPendingIntent);
-                                                mBuilder.setAutoCancel(true);
-                                                if (!activityOnResume)
-                                                    mNotificationManager.notify(notificationID, mBuilder.build());
-                                                Toast.makeText(getApplicationContext(), "user left", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                                        break;
-                                    case "messageAdd":
-                                        final String message_body = data.getString("messageBody");
-                                        final Long message_timestamp = data.getLong("timestamp");
-                                        final String message_username = data.getString("username");
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
-                                                mBuilder.setSmallIcon(R.drawable.ic_stat_name);
-                                                mBuilder.setColor(0xFF00CCCC);
-                                                mBuilder.setLights(0xFF00CCCC, 500, 1500);
-                                                mBuilder.setSound(uri);
-                                                mBuilder.setContentTitle("New message");
-                                                mBuilder.setContentText(message_username + ": " + message_body);
-                                                mBuilder.setContentIntent(mPendingIntent);
-                                                mBuilder.setAutoCancel(true);
-                                                if (!activityOnResume)
-                                                    mNotificationManager.notify(notificationID, mBuilder.build());
-                                                messagesAdapter.add(new Message(message_username, message_timestamp, message_body));
-                                            }
-                                        });
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            } catch (final JSONException e) {
-                                Log.e(MAIN_ACTIVITY_TAG, "Json parsing error: " + e.getMessage());
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getApplicationContext(),
-                                                "Json parsing error: " + e.getMessage(),
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        }
-                    };
-                    ws = client.newWebSocket(request, listener);
-                    client.dispatcher().executorService().shutdown();
+        /*if (accountManager.getAccounts().length == 0) {
+            Log.i("onCreate", accountManager.getAccounts().toString());
+            accountManager.addAccount(getString(R.string.account_type), null, null,null, null, null, null);
+        }*/
+/*
+        Account account = accountManager.getAccounts()[0];
+        String authTokenType = "bearer";
+        accountManager.getAuthToken(account, authTokenType, null, this, new AccountManagerCallback<Bundle> () {
+            @Override
+            public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
+                try {
+                    Bundle bundle = accountManagerFuture.getResult();
+                    authtoken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }, null);
-        }
+                client = new OkHttpClient();
+                Request request = new Request.Builder().url("wss://owncloudhk.net/app?access_token=" + authtoken).build();
+                WebSocketListener listener = new WebSocketListener() {
+
+                    @Override
+                    public void onMessage(WebSocket webSocket, String text) {
+                        try {
+                            final JSONObject message = new JSONObject(text);
+                            final String type = message.getString("type");
+                            JSONObject data = message.getJSONObject("data");
+                            switch (type) {
+                                case "context": {
+                                    final JSONArray users = data.getJSONArray("users");
+                                    final JSONArray messages = data.getJSONArray("messages");
+                                    for (int i = 0; i < messages.length(); ++i) {
+                                        JSONObject item = messages.getJSONObject(i);
+                                        final String username = item.getString("username");
+                                        final Long timestamp = item.getLong("timestamp");
+                                        final String messageBody = item.getString("messageBody");
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                messagesAdapter.add(new Message(username, timestamp, messageBody));
+                                            }
+                                        });
+                                    }
+                                    break;
+                                }
+                                case "userJoined":
+                                    final String username = data.getString("username");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
+                                            mBuilder.setSmallIcon(R.drawable.ic_stat_name);
+                                            mBuilder.setColor(0xFF00CCCC);
+                                            mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                            mBuilder.setSound(uri);
+                                            mBuilder.setContentTitle("New user joined");
+                                            mBuilder.setContentText(username + " joined! Say \"Hi\" to him!");
+                                            mBuilder.setContentIntent(mPendingIntent);
+                                            mBuilder.setAutoCancel(true);
+                                            if (!activityOnResume)
+                                                mNotificationManager.notify(notificationID, mBuilder.build());
+                                            Toast.makeText(getApplicationContext(), username + " joined", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    break;
+                                case "userLeft":
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
+                                            mBuilder.setSmallIcon(R.drawable.ic_stat_name);
+                                            mBuilder.setColor(0xFF00CCCC);
+                                            mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                            mBuilder.setSound(uri);
+                                            mBuilder.setContentTitle("User left");
+                                            mBuilder.setContentText("One user just left chat..");
+                                            mBuilder.setContentIntent(mPendingIntent);
+                                            mBuilder.setAutoCancel(true);
+                                            if (!activityOnResume)
+                                                mNotificationManager.notify(notificationID, mBuilder.build());
+                                            Toast.makeText(getApplicationContext(), "user left", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    break;
+                                case "messageAdd":
+                                    final String message_body = data.getString("messageBody");
+                                    final Long message_timestamp = data.getLong("timestamp");
+                                    final String message_username = data.getString("username");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext());
+                                            mBuilder.setSmallIcon(R.drawable.ic_stat_name);
+                                            mBuilder.setColor(0xFF00CCCC);
+                                            mBuilder.setLights(0xFF00CCCC, 500, 1500);
+                                            mBuilder.setSound(uri);
+                                            mBuilder.setContentTitle("New message");
+                                            mBuilder.setContentText(message_username + ": " + message_body);
+                                            mBuilder.setContentIntent(mPendingIntent);
+                                            mBuilder.setAutoCancel(true);
+                                            if (!activityOnResume)
+                                                mNotificationManager.notify(notificationID, mBuilder.build());
+                                            messagesAdapter.add(new Message(message_username, message_timestamp, message_body));
+                                        }
+                                    });
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } catch (final JSONException e) {
+                            Log.e(MAIN_ACTIVITY_TAG, "Json parsing error: " + e.getMessage());
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Json parsing error: " + e.getMessage(),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                };
+                ws = client.newWebSocket(request, listener);
+                client.dispatcher().executorService().shutdown();
+            }
+        }, null);
+
 
         messagesList = new ArrayList<>();
 
@@ -259,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
         MessagesWrapper.setAdapter(messagesAdapter);
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mPendingIntent = PendingIntent.getActivity(this, 0, getIntent(), PendingIntent.FLAG_UPDATE_CURRENT);
+        mPendingIntent = PendingIntent.getActivity(this, 0, getIntent(), PendingIntent.FLAG_UPDATE_CURRENT);*/
     }
 
     @Override
@@ -278,12 +283,43 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
 
     @Override
     public void onAccountsUpdated(Account[] accounts) {
-        if (accounts.length > 0) {
-            return;
+        if (accounts.length == 0) {
+            accountManager.addAccount(getString(R.string.account_type), null, null,null, null, new AccountManagerCallback<Bundle>() {
+                @Override
+                public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
+                    Bundle b;
+                    try {
+                        b = accountManagerFuture.getResult();
+                        Intent intent = b.getParcelable(AccountManager.KEY_INTENT);
+                        startActivity(intent);
+                        finish();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, null);
+        } else {
+            Account account = accountManager.getAccounts()[0];
+            accountManager.getAuthToken(account, AuthenticatorActivity.AUTH_TOKEN_TYPE, null, null, new AccountManagerCallback<Bundle>() {
+                @Override
+                public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
+                    Bundle b;
+                    try {
+                        b = accountManagerFuture.getResult();
+                        if (b.containsKey(AccountManager.KEY_INTENT)) {
+                            Intent intent = b.getParcelable(AccountManager.KEY_INTENT);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            authtoken = b.getString(AccountManager.KEY_AUTHTOKEN);
+                            Log.i("authtoken", authtoken);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, null);
         }
-        Intent intent = new Intent(this, AuthenticatorActivity.class);
-        startActivity(intent);
-        finish();
     }
 
 }
