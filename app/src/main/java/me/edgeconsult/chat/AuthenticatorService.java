@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
 public class AuthenticatorService extends Service {
 
@@ -20,7 +22,11 @@ public class AuthenticatorService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return getAuthenticator().getIBinder();
+        IBinder ret = null;
+        if (intent.getAction().equals(android.accounts.AccountManager.ACTION_AUTHENTICATOR_INTENT)) {
+            ret = getAuthenticator().getIBinder();
+        }
+        return ret;
     }
 
     private AccountAuthenticator getAuthenticator() {
@@ -53,12 +59,12 @@ public class AuthenticatorService extends Service {
         public Bundle getAuthToken(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, String s, Bundle bundle) throws NetworkErrorException {
             final AccountManager am = AccountManager.get(context);
             String authToken = am.peekAuthToken(account, s);
-            /*if (TextUtils.isEmpty(authToken)) {
-                final String password = am.getPassword(account);
-                if (password != null) {
-                    authToken = sServerAuthenticate.userSignIn(account.name, password, authTokenType);
-                }
-            }*/
+            //if (TextUtils.isEmpty(authToken)) {
+            //  final String password = am.getPassword(account);
+            //  if (password != null) {
+            //      authToken = sServerAuthenticate.userSignIn(account.name, password, authTokenType);
+            //  }
+            //}
             if (!TextUtils.isEmpty(authToken)) {
                 final Bundle result = new Bundle();
                 result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
@@ -76,12 +82,20 @@ public class AuthenticatorService extends Service {
 
         @Override
         public Bundle addAccount(AccountAuthenticatorResponse accountAuthenticatorResponse, String s, String s1, String[] strings, Bundle bundle) throws NetworkErrorException {
-            final Intent intent = new Intent(context, AuthenticatorActivity.class);
-            intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, accountAuthenticatorResponse);
-            intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, s);
-            final Bundle b = new Bundle();
-            b.putParcelable(AccountManager.KEY_INTENT, intent);
-            return b;
+            AccountManager accountManager = AccountManager.get(context);
+            if (accountManager.getAccounts().length == 0) {
+                final Intent intent = new Intent(context, AuthenticatorActivity.class);
+                intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, accountAuthenticatorResponse);
+                intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, s);
+                final Bundle b = new Bundle();
+                b.putParcelable(AccountManager.KEY_INTENT, intent);
+                return b;
+            } else {
+                final Bundle b = new Bundle();
+                b.putInt(AccountManager.KEY_ERROR_CODE, 1);
+                b.putString(AccountManager.KEY_ERROR_MESSAGE, "Only one account allowed");
+                return b;
+            }
         }
 
         @Override
