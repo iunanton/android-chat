@@ -25,6 +25,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
+    public static final String AUTH_TOKEN_TYPE = "Full access";
+
     private static String TAG = "AuthenticatorActivity";
     private TextInputLayout usernameInputLayout;
     private String username;
@@ -34,7 +36,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private Button btn_login;
 
     private AccountManager mAccountManager;
-    private String mAuthTokenType = "bearer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +85,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     connection.setRequestProperty("Accept", "*/*");
                     connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                     connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
-                    connection.setUseCaches (false);
+                    connection.setUseCaches(false);
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
                     DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
@@ -136,7 +137,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
         final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
         String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-        String authtokenType = mAuthTokenType;
+        String authtokenType = AuthenticatorActivity.AUTH_TOKEN_TYPE;
         mAccountManager.addAccountExplicitly(account, null, null);
         mAccountManager.setAuthToken(account, authtokenType, authtoken);
         setAccountAuthenticatorResult(intent.getExtras());
