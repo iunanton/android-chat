@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
         mBuilder.setSound(uri);
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(contentText);
-        //mBuilder.setContentIntent(mPendingIntent);
+        mBuilder.setContentIntent(mPendingIntent);
         mBuilder.setAutoCancel(true);
         mNotificationManager.notify(notificationID, mBuilder.build());
     }
