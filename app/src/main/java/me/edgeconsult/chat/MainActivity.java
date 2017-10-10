@@ -65,8 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
     private EditText Input;
     private ImageButton SendButton;
 
-    private OkHttpClient client;
-
+    //private OkHttpClient client;
     private WebSocket ws;
 
     private ArrayList<Message> messagesList;
@@ -141,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
     @Override
     public void onAccountsUpdated(Account[] accounts) {
         if (accounts.length == 0) {
+            MyClient.closeWebSocket();
             accountManager.addAccount(getString(R.string.account_type), null, null,null, null, new AccountManagerCallback<Bundle>() {
                 @Override
                 public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
@@ -175,11 +175,9 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
                         finish();
                     } else {
                         authtoken = b.getString(AccountManager.KEY_AUTHTOKEN);
-                        client = new OkHttpClient();
                         Request request = new Request.Builder().url("wss://owncloudhk.net/app?access_token=" + authtoken).build();
                         WebSocketListener listener = new MyWebSocketListener();
-                        ws = client.newWebSocket(request, listener);
-                        client.dispatcher().executorService().shutdown();
+                        ws = MyClient.getWebSocket(request, listener);
                         SendButton.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
                                 String ed_text = Input.getText().toString().trim().replaceAll("\\r|\\n", " ");
