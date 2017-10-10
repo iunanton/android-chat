@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -134,16 +135,20 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         usernameInputLayout.setEnabled(true);
         passwordInputLayout.setEnabled(true);
         btn_login.setEnabled(true);
-        String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-        final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
-        String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-        String authtokenType = AuthenticatorActivity.AUTH_TOKEN_TYPE;
-        mAccountManager.addAccountExplicitly(account, null, null);
-        mAccountManager.setAuthToken(account, authtokenType, authtoken);
-        setAccountAuthenticatorResult(intent.getExtras());
-        setResult(RESULT_OK, intent);
-        finish();
-        startActivity(new Intent(this, MainActivity.class));
+        if (intent != null) {
+            String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+            String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+            String authtokenType = AuthenticatorActivity.AUTH_TOKEN_TYPE;
+            mAccountManager.addAccountExplicitly(account, null, null);
+            mAccountManager.setAuthToken(account, authtokenType, authtoken);
+            setAccountAuthenticatorResult(intent.getExtras());
+            setResult(RESULT_OK, intent);
+            finish();
+            startActivity(new Intent(this, MainActivity.class));
+        } else {
+            Toast.makeText(this, "Username or password invalid", Toast.LENGTH_LONG).show();
+        }
     }
 
     public boolean validate() {
