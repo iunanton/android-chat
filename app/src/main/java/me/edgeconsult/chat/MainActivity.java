@@ -4,13 +4,10 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
 import android.accounts.OnAccountsUpdateListener;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -36,9 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
@@ -118,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
         mPendingIntent = PendingIntent.getActivity(this, 0, getIntent(), PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (accountManager.getAccounts().length > 0) {
-            Log.i("onCreate", "Launch Init()");
             Init();
         }
     }
@@ -160,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
                     }
                 }
             }, null);
-            Log.i("onAccountsUpdated", "Launch Init()");
         } else {
             Init();
         }
