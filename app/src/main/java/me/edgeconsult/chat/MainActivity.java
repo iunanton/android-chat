@@ -138,6 +138,11 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
     }
 
     @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
     public void onAccountsUpdated(Account[] accounts) {
         if (accounts.length == 0) {
             MyClient.closeWebSocket();
