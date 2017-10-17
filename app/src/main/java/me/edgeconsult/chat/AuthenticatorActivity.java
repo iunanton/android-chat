@@ -26,7 +26,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
-    public static final String AUTH_TOKEN_TYPE = "Full access";
+    private static final String AUTHENTICATOR_ACTIVITY_TAG = AuthenticatorActivity.class.getSimpleName();
+    //public static final String AUTH_TOKEN_TYPE = "Full access";
 
     private static String TAG = "AuthenticatorActivity";
     private TextInputLayout usernameInputLayout;
@@ -58,10 +59,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private void login() {
         // Log.d(TAG, "Invoked login function");
 
-        if (!validate()) {
-            // onLoginFailed();
-            return;
-        }
+
 
         btn_login.setEnabled(false);
         usernameInputLayout.setEnabled(false);
@@ -139,7 +137,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
             String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-            String authtokenType = AuthenticatorActivity.AUTH_TOKEN_TYPE;
+            String authtokenType = getString(R.string.auth_token_type);
             mAccountManager.addAccountExplicitly(account, null, null);
             mAccountManager.setAuthToken(account, authtokenType, authtoken);
             setAccountAuthenticatorResult(intent.getExtras());

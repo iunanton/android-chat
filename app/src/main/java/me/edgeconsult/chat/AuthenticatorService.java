@@ -15,8 +15,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+/**
+ * Created by yun on 10/13/17.
+ */
+
 public class AuthenticatorService extends Service {
 
+    private static final String AUTHENTICATOR_SERVICE_TAG = MainActivity.class.getSimpleName();
     private static AccountAuthenticator accountAuthenticator = null;
 
     @Nullable
@@ -38,6 +43,7 @@ public class AuthenticatorService extends Service {
     }
 
     public class AccountAuthenticator extends AbstractAccountAuthenticator {
+
         private Context context;
 
         public AccountAuthenticator(Context context) {
@@ -65,7 +71,7 @@ public class AuthenticatorService extends Service {
             //      authToken = sServerAuthenticate.userSignIn(account.name, password, authTokenType);
             //  }
             //}
-            if (!TextUtils.isEmpty(authToken)) {
+            if (!authToken.isEmpty()) {
                 final Bundle result = new Bundle();
                 result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
                 result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
@@ -83,7 +89,7 @@ public class AuthenticatorService extends Service {
         @Override
         public Bundle addAccount(AccountAuthenticatorResponse accountAuthenticatorResponse, String s, String s1, String[] strings, Bundle bundle) throws NetworkErrorException {
             AccountManager accountManager = AccountManager.get(context);
-            if (accountManager.getAccounts().length == 0) {
+            if (accountManager.getAccountsByType(getString(R.string.account_type)).length == 0) {
                 final Intent intent = new Intent(context, AuthenticatorActivity.class);
                 intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, accountAuthenticatorResponse);
                 intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, s);

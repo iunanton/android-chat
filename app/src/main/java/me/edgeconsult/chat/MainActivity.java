@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mPendingIntent = PendingIntent.getActivity(this, 0, getIntent(), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if (accountManager.getAccounts().length > 0) {
+        if (accountManager.getAccountsByType(getString(R.string.account_type)).length > 0) {
             Init();
         }
     }
@@ -138,30 +138,33 @@ public class MainActivity extends AppCompatActivity implements OnAccountsUpdateL
 
     @Override
     public void onAccountsUpdated(Account[] accounts) {
-        if (accounts.length == 0) {
-            MyClient.closeWebSocket();
-            accountManager.addAccount(getString(R.string.account_type), null, null,null, null, new AccountManagerCallback<Bundle>() {
-                @Override
-                public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
-                    Bundle b;
-                    try {
-                        b = accountManagerFuture.getResult();
-                        Intent intent = b.getParcelable(AccountManager.KEY_INTENT);
-                        startActivity(intent);
-                        finish();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, null);
-        } else {
-            Init();
+        for (Account account:accounts) {
+            Log.i(MAIN_ACTIVITY_TAG, account.type.toString());
+            if (account.type.equals(getString(R.string.account_type))) {
+                return;
+            }
         }
+        Log.i(MAIN_ACTIVITY_TAG, "onAccountsUpdated" + String.valueOf(accounts.length));
+        MyClient.closeWebSocket();
+        accountManager.addAccount(getString(R.string.account_type), null, null,null, null, new AccountManagerCallback<Bundle>() {
+            @Override
+            public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
+                Bundle b;
+                try {
+                    b = accountManagerFuture.getResult();
+                    Intent intent = b.getParcelable(AccountManager.KEY_INTENT);
+                    startActivity(intent);
+                    finish();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, null);
     }
 
     private void Init() {
-        Account account = accountManager.getAccounts()[0];
-        accountManager.getAuthToken(account, AuthenticatorActivity.AUTH_TOKEN_TYPE, null, null, new AccountManagerCallback<Bundle>() {
+        Account account = accountManager.getAccountsByType(getString(R.string.account_type))[0];
+        accountManager.getAuthToken(account, getString(R.string.auth_token_type), null, null, new AccountManagerCallback<Bundle>() {
             @Override
             public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
                 Bundle b;
